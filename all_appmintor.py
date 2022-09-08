@@ -26,6 +26,7 @@ List of apps installed on user's service
 docker_app = []
 torrent_client = []
 
+sql_apps = ['mariadb','filebrowser','nextcloud','pydio']
 
 
 """
@@ -47,6 +48,10 @@ class app_monitor():
         for i in installed_apps:
             if i in all_apps:
                 docker_app.append(i)
+        for s in sql_apps:
+            docker_app.remove(i)
+            
+        print(docker_app)
         
     def get_torrent_clients(self,path):
         remove_config = ['systemd']
@@ -60,9 +65,76 @@ class app_monitor():
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
-        print(torrent_client)
+
+    def Monitor_Webserver(self):
+        status = os.popen("ps aux | grep -i nginx")
+        count = len(status.readlines())
+        if count <= 2:
+                os.system("app-nginx restart")
+                
+    def monitor_docker_app(self,apps):
+        for i in apps:
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                os.system("app-{} upgrade".format(i))
+                with open(docker_log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('{} was down and has been RESTARTED'.format(i))
+                    os.system("clear")
+            else:
+                pass
+            time.sleep(40)
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                os.system("app-{} upgrade".format(i))
+                with open(docker_log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('{} was down and has been RESTARTED(2nd attempt)'.format(i))
+                    os.system("clear")
+            else:
+                pass
+            
+            time.sleep(40)
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                with open(docker_log_file, "a") as f:
+                    f.write(
+                        "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+                    
+                    
+    def torrent_client_fixing(self, apps):
+        for i in apps:
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                os.system("app-{} restart".format(i))
+                with open(rtorrent_log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('{} was down and has been RESTARTED'.format(i))
+                    os.system("clear")
+            else:
+                pass
+            time.sleep(2)
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                os.system("app-{} repair".format(i))
+                with open(rtorrent_log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('{} was down and has been repair'.format(i))
+                    os.system("clear")
+            time.sleep(2)
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                with open(rtorrent_log_file, "a") as f:
+                    f.write(
+                        "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
 
 monitor = app_monitor()
 if __name__ == '__main__':
-    # monitor.get_docker_apps(apps_path)
-    monitor.get_torrent_clients(config_path)
+    monitor.get_docker_apps(apps_path)
+    # monitor.get_torrent_clients(config_path)
