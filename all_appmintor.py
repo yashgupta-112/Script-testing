@@ -18,6 +18,16 @@ torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
 path = os.getcwd()  # homex/username
 apps_path = path + '/.apps'
 config_path = path + '/.config'
+
+"""
+List of apps installed on user's service
+"""
+
+docker_app = []
+torrent_client = []
+torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
+
+
 """
 List of all application provide by us
 """
@@ -34,13 +44,18 @@ class app_monitor():
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
-        print(installed_apps)
+        for i in installed_apps:
+            if i in all_apps:
+                docker_app.append(i)
         
     def get_torrent_clients(self,path):
         remove_config = ['systemd']
         all_configs = os.listdir(path)
         all_torrent_clients = list(set(all_configs).difference(remove_config))
-        print(all_torrent_clients)
+        torrent_client_list = set(torrent_client_list)
+        all_torrent_clients = set(all_torrent_clients)
+        torrent_client = torrent_client_list.intersection(all_torrent_clients)
+        print(torrent_client)
 
 monitor = app_monitor()
 if __name__ == '__main__':
