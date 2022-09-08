@@ -25,7 +25,7 @@ List of apps installed on user's service
 
 docker_app = []
 torrent_client = []
-torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
+
 
 
 """
@@ -50,6 +50,7 @@ class app_monitor():
         
     def get_torrent_clients(self,path):
         remove_config = ['systemd']
+        torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
         all_configs = os.listdir(path)
         all_torrent_clients = list(set(all_configs).difference(remove_config))
         torrent_client_list = set(torrent_client_list)
