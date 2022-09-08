@@ -50,12 +50,16 @@ class app_monitor():
         
     def get_torrent_clients(self,path):
         remove_config = ['systemd']
-        torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
         all_configs = os.listdir(path)
         all_torrent_clients = list(set(all_configs).difference(remove_config))
-        torrent_client_list = set(torrent_client_list)
-        all_torrent_clients = set(all_torrent_clients)
-        torrent_client = torrent_client_list.intersection(all_torrent_clients)
+        if "rtorrent" in all_torrent_clients:
+            torrent_client.append('rtorrent')
+        if "deluge" in all_torrent_clients:
+            torrent_client.append('deluge')
+        if "qBittorrent" in all_torrent_clients:
+            torrent_client.append('qbittorrent')
+        if "transmission-daemon" in all_torrent_clients:
+            torrent_client.append('transmission')
         print(torrent_client)
 
 monitor = app_monitor()
