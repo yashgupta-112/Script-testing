@@ -36,7 +36,13 @@ class app_monitor():
         installed_apps = list(set(all_apps).difference(remove_apps))
         print(installed_apps)
         
+    def get_torrent_clients(self,path):
+        remove_config = ['systemd']
+        all_configs = os.listdir(path)
+        all_torrent_clients = list(set(all_configs).difference(remove_config))
+        print(all_torrent_clients)
 
 monitor = app_monitor()
 if __name__ == '__main__':
-    monitor.get_docker_apps(apps_path)
+    # monitor.get_docker_apps(apps_path)
+    monitor.get_torrent_clients(config_path)
