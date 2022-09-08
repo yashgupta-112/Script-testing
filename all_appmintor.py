@@ -25,6 +25,7 @@ List of apps installed on user's service
 
 docker_app = []
 torrent_client = []
+mysql_apps =[]
 
 sql_apps = ['mariadb','filebrowser','nextcloud','pydio']
 
@@ -49,9 +50,17 @@ class app_monitor():
             if i in all_apps:
                 docker_app.append(i)
         for s in sql_apps:
-            docker_app.remove(s)
+            #print(s)
+            if s in docker_app:
+                docker_app.remove(s)
             
-        print(docker_app)
+    def sql_based_apps(self,path):
+        remove_apps = ['backup', 'nginx']
+        all_apps = os.listdir(path)
+        installed_apps = list(set(all_apps).difference(remove_apps))
+        mysql_apps = list(set(installed_apps).difference(remove_apps))
+        print(mysql_apps)
+        
         
     def get_torrent_clients(self,path):
         remove_config = ['systemd']
@@ -136,5 +145,6 @@ class app_monitor():
 
 monitor = app_monitor()
 if __name__ == '__main__':
-    monitor.get_docker_apps(apps_path)
+    # monitor.get_docker_apps(apps_path)
     # monitor.get_torrent_clients(config_path)
+    monitor.sql_based_apps(apps_path)
