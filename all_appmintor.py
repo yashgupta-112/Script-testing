@@ -49,7 +49,7 @@ class app_monitor():
             if i in all_apps:
                 docker_app.append(i)
         for s in sql_apps:
-            docker_app.remove(i)
+            docker_app.remove(s)
             
         print(docker_app)
         
