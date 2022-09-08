@@ -30,7 +30,7 @@ all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'ra
 
 class app_monitor():
     
-    def get_docker_apps(self):
+    def get_docker_apps(self,path):
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
