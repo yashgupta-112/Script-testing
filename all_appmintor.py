@@ -58,8 +58,10 @@ class app_monitor():
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
-        mysql_apps = list(set(installed_apps).difference(remove_apps))
-        print(mysql_apps)
+        for i in sql_apps:
+            if i in installed_apps:
+                mysql_apps.append(i)
+        print(mysql_apps)        
         
         
     def get_torrent_clients(self,path):
