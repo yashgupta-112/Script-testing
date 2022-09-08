@@ -39,4 +39,4 @@ class app_monitor():
 
 monitor = app_monitor()
 if __name__ == '__main__':
-    monitor.get_docker_apps()
+    monitor.get_docker_apps(apps_path)
