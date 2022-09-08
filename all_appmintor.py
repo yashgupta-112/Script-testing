@@ -10,7 +10,6 @@ current_time = now.strftime("%H:%M:%S")
 Variable for location log files
 """
 work_dir = os.getcwd()
-apps_file = '{}/scripts/app_monitor/apps.txt'.format(work_dir)
 monitor_app_list = []
 rtorrent_log_file = '{}/scripts/app_monitor/torrentapps.txt'.format(work_dir)
 docker_log_file = '{}/scripts/app_monitor/docker_apps.txt'.format(work_dir)
@@ -41,7 +40,9 @@ all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'ra
 
 
 class app_monitor():
-    
+    """
+    These below given function will get all apps intalled on service
+    """
     def get_docker_apps(self,path):
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
@@ -60,8 +61,7 @@ class app_monitor():
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in sql_apps:
             if i in installed_apps:
-                mysql_apps.append(i)
-        print(mysql_apps)        
+                mysql_apps.append(i)       
         
         
     def get_torrent_clients(self,path):
@@ -76,6 +76,10 @@ class app_monitor():
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
+
+    """
+    Below given function will monitor the apps
+    """
 
     def Monitor_Webserver(self):
         status = os.popen("ps aux | grep -i nginx")
@@ -145,8 +149,33 @@ class app_monitor():
                     f.write(
                         "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
 
+    def sql_app_monitor(self,apps):
+        for i in apps:
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                os.system("app-{} restart".format(i))
+                with open(rtorrent_log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('{} was down and has been RESTARTED'.format(i))
+                    os.system("clear")
+            else:
+                pass
+            time.sleep(2)
+            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            count = len(status.splitlines())
+            if count <= 2:
+                with open(rtorrent_log_file, "a") as f:
+                    f.write(
+                        "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+
+
+
 monitor = app_monitor()
 if __name__ == '__main__':
-    # monitor.get_docker_apps(apps_path)
-    # monitor.get_torrent_clients(config_path)
+    monitor.get_docker_apps(apps_path)
+    monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
+    monitor.monitor_docker_app(docker_app)
+    monitor.torrent_client_fixing(torrent_client)
+    monitor.sql_app_monitor(mysql_apps)
