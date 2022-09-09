@@ -26,12 +26,7 @@ docker_app = []
 torrent_client = []
 mysql_apps =[]
 
-sql_apps = ['mariadb','filebrowser','nextcloud','pydio','thelounge']
 
-second_instance = ['radarr2','sonarr2','lidarr2','prowlarr2','whisparr2','bazarr2', 'readarr2', 'autobrr', 'navidrome']
-
-second_instance_service = ['autobrr.service','navidrome.service','prowlarr.service','rclone-vfs.service','xteve.service',
-'lidarr.service','radarr.service','whisparr.service','sonarr.service','rclone-normal.service','mergerfs.service','proftpd.service']
 
 
 """
@@ -50,13 +45,25 @@ all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'ra
             'jellyfin', 'nextcloud', 'overseerr', 'sonarr', 'znc', 'bazarr', 'emby', 'lazylibrarian', 'plex', 'rapidleech',
             'sabnzbd', 'syncthing', 'btsync', 'filebot', 'lidarr', 'nzbget', 'readarr', 'sickbeard', 'tautulli',
             'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill',]
+sql_apps = ['mariadb','filebrowser','nextcloud','pydio','thelounge']
 
+second_instance = ['radarr2','sonarr2','lidarr2','prowlarr2','whisparr2','bazarr2', 'readarr2', 'autobrr', 'navidrome']
+
+second_instance_service = ['autobrr.service','navidrome.service','prowlarr.service','rclone-vfs.service','xteve.service',
+'lidarr.service','radarr.service','whisparr.service','sonarr.service','rclone-normal.service','mergerfs.service','proftpd.service']
+
+
+"""
+Class app_monitor is decalared below with all its functions
+
+"""
 
 class app_monitor():
     """
     These below given function will get all apps intalled on service
     """
     def get_docker_apps(self,path):
+        docker_app = []
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
@@ -67,7 +74,7 @@ class app_monitor():
         for j in second_instance:
             if j in docker_app:
                 docker_app.remove(j)
-        print(docker_app)
+        return docker_app 
             
     def sql_based_apps(self,path):
         remove_apps = ['backup', 'nginx']
@@ -101,7 +108,7 @@ class app_monitor():
         if count <= 2:
                 os.system("app-nginx restart")
                 
-    def monitor_app(self,apps):
+    def dockerized_app(self,apps):
         for i in apps:
             print("app:",i)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
@@ -188,11 +195,12 @@ class app_monitor():
 
 
 
+
 monitor = app_monitor()
 if __name__ == '__main__':
-    monitor.get_docker_apps(apps_path)
+    apps = monitor.get_docker_apps(apps_path)
     monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
-    monitor.monitor_app(docker_app)
+    monitor.dockerized_app(apps)
     # monitor.torrent_client_fixing(torrent_client)
     # monitor.sql_app_monitor(mysql_apps)
