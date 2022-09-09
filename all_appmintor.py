@@ -47,10 +47,9 @@ class app_monitor():
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
-        for j in all_apps:
-            for i in installed_apps:
-                if j == i:
-                    docker_app.append(i)
+        for i in installed_apps:
+            if i in all_apps:
+                docker_app.append(i)
         for s in sql_apps:
             #print(s)
             if s in docker_app:
@@ -62,7 +61,7 @@ class app_monitor():
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in sql_apps:
-            if i == installed_apps:
+            if i in installed_apps:
                 mysql_apps.append(i)    
         print(mysql_apps)   
         
