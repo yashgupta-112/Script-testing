@@ -54,6 +54,7 @@ class app_monitor():
             #print(s)
             if s in docker_app:
                 docker_app.remove(s)
+        print(docker_app)
             
     def sql_based_apps(self,path):
         remove_apps = ['backup', 'nginx']
@@ -61,7 +62,8 @@ class app_monitor():
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in sql_apps:
             if i in installed_apps:
-                mysql_apps.append(i)       
+                mysql_apps.append(i)    
+        print(mysql_apps)   
         
         
     def get_torrent_clients(self,path):
@@ -76,6 +78,7 @@ class app_monitor():
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
+        print(torrent_client)
 
     """
     Below given function will monitor the apps
@@ -176,6 +179,6 @@ if __name__ == '__main__':
     monitor.get_docker_apps(apps_path)
     monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
-    monitor.monitor_docker_app(docker_app)
-    monitor.torrent_client_fixing(torrent_client)
-    monitor.sql_app_monitor(mysql_apps)
+    # monitor.monitor_docker_app(docker_app)
+    # monitor.torrent_client_fixing(torrent_client)
+    # monitor.sql_app_monitor(mysql_apps)
