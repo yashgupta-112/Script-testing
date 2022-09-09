@@ -27,9 +27,11 @@ torrent_client = []
 mysql_apps =[]
 
 sql_apps = ['mariadb','filebrowser','nextcloud','pydio','thelounge']
+
 second_instance = ['radarr2','sonarr2','lidarr2','prowlarr2','whisparr2','bazarr2', 'readarr2', 'autobrr', 'navidrome']
+
 second_instance_service = ['autobrr.service','navidrome.service','prowlarr.service','rclone-vfs.service','xteve.service',
-'lidarr.service','radarr.service','whisparr.service','sonarr.service']
+'lidarr.service','radarr.service','whisparr.service','sonarr.service','rclone-normal.service','mergerfs.service','proftpd.service']
 
 
 """
