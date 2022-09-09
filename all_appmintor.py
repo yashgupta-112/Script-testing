@@ -76,7 +76,6 @@ class app_monitor():
         for i in sql_apps:
             if i in installed_apps:
                 mysql_apps.append(i)    
-        print(mysql_apps)   
         
         
     def get_torrent_clients(self,path):
@@ -91,7 +90,6 @@ class app_monitor():
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
-        print(torrent_client)
 
     """
     Below given function will monitor the apps
@@ -105,17 +103,20 @@ class app_monitor():
                 
     def monitor_docker_app(self,apps):
         for i in apps:
+            print("app:",i)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
+            print("count:",count)
             if count <= 2:
                 os.system("app-{} upgrade".format(i))
+                print("{} app upgrade".format(i))
                 with open(docker_log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
                     f.write('{} was down and has been RESTARTED'.format(i))
                     os.system("clear")
             else:
                 pass
-            time.sleep(40)
+            time.sleep(120)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
             if count <= 2:
@@ -177,7 +178,7 @@ class app_monitor():
                     os.system("clear")
             else:
                 pass
-            time.sleep(2)
+            time.sleep(120)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
             if count <= 2:
@@ -193,5 +194,5 @@ if __name__ == '__main__':
     monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
     monitor.monitor_docker_app(docker_app)
-    monitor.torrent_client_fixing(torrent_client)
-    monitor.sql_app_monitor(mysql_apps)
+    # monitor.torrent_client_fixing(torrent_client)
+    # monitor.sql_app_monitor(mysql_apps)
