@@ -74,7 +74,7 @@ class app_monitor():
             torrent_client.append('rtorrent')
         if "deluge" in all_torrent_clients:
             torrent_client.append('deluge')
-        if "qBittorrent" in all_torrent_clients:
+        if "qbittorrent-nox" in all_torrent_clients:
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
