@@ -27,7 +27,7 @@ torrent_client = []
 mysql_apps =[]
 
 sql_apps = ['mariadb','filebrowser','nextcloud','pydio','thelounge']
-
+second_instance =['radarr2','sonarr2','lidarr2','prowlarr2','whisparr2']
 
 """
 List of all application provide by us
@@ -47,14 +47,13 @@ class app_monitor():
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
-        # for i in installed_apps:
-            # if i in all_apps:
-                # docker_app.append(i)
         docker_app = list(set(all_apps).intersection(installed_apps))
         for s in sql_apps:
-            #print(s)
             if s in docker_app:
                 docker_app.remove(s)
+        for j in second_instance:
+            if j in docker_app:
+                docker_app.remove(j)
         print(docker_app)
             
     def sql_based_apps(self,path):
