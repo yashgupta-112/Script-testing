@@ -101,7 +101,7 @@ class app_monitor():
         if count <= 2:
                 os.system("app-nginx restart")
                 
-    def monitor_docker_app(self,apps):
+    def monitor_app(self,apps):
         for i in apps:
             print("app:",i)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
@@ -193,6 +193,6 @@ if __name__ == '__main__':
     monitor.get_docker_apps(apps_path)
     monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
-    monitor.monitor_docker_app(docker_app)
+    monitor.monitor_app(docker_app)
     # monitor.torrent_client_fixing(torrent_client)
     # monitor.sql_app_monitor(mysql_apps)
