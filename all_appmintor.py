@@ -16,7 +16,7 @@ docker_log_file = '{}/scripts/app_monitor/docker_apps.txt'.format(work_dir)
 torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
 path = os.getcwd()  # homex/username
 apps_path = path + '/.apps'
-config_path = path + '/.config'
+config_path = path + '/bin'
 
 """
 List of apps installed on user's service
@@ -48,7 +48,7 @@ class app_monitor():
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in installed_apps:
-            if i in all_apps:
+            if i == all_apps:
                 docker_app.append(i)
         for s in sql_apps:
             #print(s)
@@ -61,7 +61,7 @@ class app_monitor():
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in sql_apps:
-            if i in installed_apps:
+            if i == installed_apps:
                 mysql_apps.append(i)    
         print(mysql_apps)   
         
