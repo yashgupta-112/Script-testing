@@ -26,7 +26,7 @@ docker_app = []
 torrent_client = []
 mysql_apps =[]
 
-sql_apps = ['mariadb','filebrowser','nextcloud','pydio']
+sql_apps = ['mariadb','filebrowser','nextcloud','pydio','thelounge']
 
 
 """
@@ -36,7 +36,7 @@ all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'ra
             'jdownloader2', 'mylar3', 'openvpn', 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge', 
             'jellyfin', 'nextcloud', 'overseerr', 'sonarr', 'znc', 'bazarr', 'emby', 'lazylibrarian', 'plex', 'rapidleech',
             'sabnzbd', 'syncthing', 'btsync', 'filebot', 'lidarr', 'nzbget', 'readarr', 'sickbeard', 'tautulli',
-            'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill', 'thelounge']
+            'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill',]
 
 
 class app_monitor():
