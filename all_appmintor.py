@@ -1,22 +1,20 @@
 import os
 import time
-from datetime import datetime
+import datetime
 """
 Data and time to store restart time of application
 """
-now = datetime.now()
-current_time = now.strftime("%H:%M:%S")
+
+now = datetime.datetime.now()
+current_time = now.strftime("%Y-%m-%d %H:%M:%S")
 """
 Variable for location log files
 """
 work_dir = os.getcwd()
-monitor_app_list = []
-rtorrent_log_file = '{}/scripts/app_monitor/torrentapps.txt'.format(work_dir)
-docker_log_file = '{}/scripts/app_monitor/docker_apps.txt'.format(work_dir)
+log_file = '{}/scripts/app_monitor/apps_log.log'.format(work_dir)
 torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
-path = os.getcwd()  # homex/username
-apps_path = path + '/.apps'
-config_path = path + '/bin'
+apps_path = work_dir + '/.apps'
+config_path = work_dir + '/bin'
 
 """
 List of apps installed on user's service
@@ -24,33 +22,27 @@ List of apps installed on user's service
 
 docker_app = []
 torrent_client = []
-mysql_apps =[]
+mysql_apps = []
 
 
 
-
-"""
-1. get all service file
-2. verify all service files 
-3. check status of service file
-4. restart service
-
-"""
 
 """
 List of all application provide by us
 """
 all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'radarr', 'resilio', 'transmission', 'deluge',
-            'jdownloader2', 'mylar3', 'openvpn', 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge', 
+            'jdownloader2', 'mylar3', 'openvpn', 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge',
             'jellyfin', 'nextcloud', 'overseerr', 'sonarr', 'znc', 'bazarr', 'emby', 'lazylibrarian', 'plex', 'rapidleech',
             'sabnzbd', 'syncthing', 'btsync', 'filebot', 'lidarr', 'nzbget', 'readarr', 'sickbeard', 'tautulli',
-            'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill',]
-sql_apps = ['mariadb','filebrowser','nextcloud','pydio','thelounge']
+            'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill', ]
 
-second_instance = ['radarr2','sonarr2','lidarr2','prowlarr2','whisparr2','bazarr2', 'readarr2', 'autobrr', 'navidrome']
+sql_apps = ['mariadb', 'filebrowser', 'nextcloud', 'pydio', 'thelounge']
 
-second_instance_service = ['autobrr.service','navidrome.service','prowlarr.service','rclone-vfs.service','xteve.service',
-'lidarr.service','radarr.service','whisparr.service','sonarr.service','rclone-normal.service','mergerfs.service','proftpd.service']
+second_instance = ['radarr2', 'sonarr2', 'lidarr2', 'prowlarr2',
+                   'whisparr2', 'bazarr2', 'readarr2', 'autobrr', 'navidrome']
+
+second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.service', 'rclone-vfs.service', 'xteve.service',
+                           'lidarr.service', 'radarr.service', 'whisparr.service', 'sonarr.service', 'rclone-normal.service', 'mergerfs.service', 'proftpd.service']
 
 
 """
@@ -58,11 +50,13 @@ Class app_monitor is decalared below with all its functions
 
 """
 
+
 class app_monitor():
     """
     These below given function will get all apps intalled on service
     """
-    def get_docker_apps(self,path):
+
+    def get_docker_apps(self, path):
         docker_app = []
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
@@ -74,18 +68,17 @@ class app_monitor():
         for j in second_instance:
             if j in docker_app:
                 docker_app.remove(j)
-        return docker_app 
-            
-    def sql_based_apps(self,path):
+        return docker_app
+
+    def sql_based_apps(self, path):
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in sql_apps:
             if i in installed_apps:
-                mysql_apps.append(i)    
-        
-        
-    def get_torrent_clients(self,path):
+                mysql_apps.append(i)
+
+    def get_torrent_clients(self, path):
         remove_config = ['systemd']
         all_configs = os.listdir(path)
         all_torrent_clients = list(set(all_configs).difference(remove_config))
@@ -106,53 +99,52 @@ class app_monitor():
         status = os.popen("ps aux | grep -i nginx")
         count = len(status.readlines())
         if count <= 2:
-                os.system("app-nginx restart")
-                
-    def dockerized_app(self,apps):
+            os.system("app-nginx restart")
+
+    def dockerized_app(self, apps):
         for i in apps:
-            print("app:",i)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
-            print("count:",count)
             if count <= 2:
                 os.system("app-{} upgrade".format(i))
                 print("{} app upgrade".format(i))
-                with open(docker_log_file, "a") as f:
+                with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been RESTARTED'.format(i))
+                    f.write('{} was down and has been RESTARTED'.format(i)+"\n")
                     os.system("clear")
-            else:
-                pass
-            time.sleep(120)
-            status = os.popen("ps aux | grep -i {}".format(i)).read()
-            count = len(status.splitlines())
-            if count <= 2:
-                os.system("app-{} upgrade".format(i))
-                with open(docker_log_file, "a") as f:
-                    f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been RESTARTED(2nd attempt)'.format(i))
-                    os.system("clear")
-            else:
-                pass
             
-            time.sleep(40)
-            status = os.popen("ps aux | grep -i {}".format(i)).read()
-            count = len(status.splitlines())
-            if count <= 2:
-                with open(docker_log_file, "a") as f:
-                    f.write(
+                time.sleep(180)
+                status = os.popen("ps aux | grep -i {}".format(i)).read()
+                count = len(status.splitlines())
+                if count <= 2:
+                    os.system("app-{} upgrade".format(i))
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write(
+                        '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
+                    os.system("clear")
+                    
+                time.sleep(50)
+                status = os.popen("ps aux | grep -i {}".format(i)).read()
+                count = len(status.splitlines())
+                if count <= 2:
+                    with open(log_file, "a") as f:
+                        f.write(
                         "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
-                    
-                    
+            else:
+                pass
+
+            
+
     def torrent_client_fixing(self, apps):
         for i in apps:
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
             if count <= 2:
                 os.system("app-{} restart".format(i))
-                with open(rtorrent_log_file, "a") as f:
+                with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been RESTARTED'.format(i))
+                    f.write('{} was down and has been RESTARTED'.format(i) +"\n")
                     os.system("clear")
             else:
                 pass
@@ -161,46 +153,47 @@ class app_monitor():
             count = len(status.splitlines())
             if count <= 2:
                 os.system("app-{} repair".format(i))
-                with open(rtorrent_log_file, "a") as f:
+                with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been repair'.format(i))
+                    f.write('{} was down and has been repair'.format(i) + "\n")
                     os.system("clear")
             time.sleep(2)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
             if count <= 2:
-                with open(rtorrent_log_file, "a") as f:
+                with open(log_file, "a") as f:
                     f.write(
                         "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
 
-    def sql_app_monitor(self,apps):
+    def sql_app_monitor(self, apps):
         for i in apps:
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
             if count <= 2:
                 os.system("app-{} restart".format(i))
-                with open(rtorrent_log_file, "a") as f:
+                with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been RESTARTED'.format(i))
+                    f.write('{} was down and has been RESTARTED'.format(i)+ "\n")
                     os.system("clear")
-            else:
-                pass
-            time.sleep(120)
-            status = os.popen("ps aux | grep -i {}".format(i)).read()
-            count = len(status.splitlines())
-            if count <= 2:
-                with open(rtorrent_log_file, "a") as f:
-                    f.write(
+            
+                time.sleep(120)
+                status = os.popen("ps aux | grep -i {}".format(i)).read()
+                count = len(status.splitlines())
+                if count <= 2:
+                    with open(log_file, "a") as f:
+                        f.write(
                         "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
 
-
-
+            else:
+                pass
+            
 
 monitor = app_monitor()
 if __name__ == '__main__':
+    monitor.Monitor_Webserver()
     apps = monitor.get_docker_apps(apps_path)
     monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
     monitor.dockerized_app(apps)
-    # monitor.torrent_client_fixing(torrent_client)
-    # monitor.sql_app_monitor(mysql_apps)
+    monitor.torrent_client_fixing(torrent_client)
+    monitor.sql_app_monitor(mysql_apps)
