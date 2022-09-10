@@ -1,0 +1,18 @@
+seperate function for arr apps
+
+unique apps
+
+different process:
+overserr 
+('app:', 'jdownloader2')
+0
+('app:', 'resilio')
+0
+
+two process:
+
+
+('app:', 'bazarr')
+2
+('app:', 'syncthing')
+2

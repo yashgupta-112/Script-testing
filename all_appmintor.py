@@ -15,6 +15,8 @@ log_file = '{}/scripts/app_monitor/apps_log.log'.format(work_dir)
 torrent_client_list = ['deluge', 'transmission', 'qbittorrent', 'rtorrent']
 apps_path = work_dir + '/.apps'
 config_path = work_dir + '/bin'
+systemd_path = work_dir + '/.config/systemd/user/'
+
 
 """
 List of apps installed on user's service
@@ -23,7 +25,7 @@ List of apps installed on user's service
 docker_app = []
 torrent_client = []
 mysql_apps = []
-
+arr_apps=[]
 
 
 
@@ -44,6 +46,7 @@ second_instance = ['radarr2', 'sonarr2', 'lidarr2', 'prowlarr2',
 second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.service', 'rclone-vfs.service', 'xteve.service',
                            'lidarr.service', 'radarr.service', 'whisparr.service', 'sonarr.service', 'rclone-normal.service', 'mergerfs.service', 'proftpd.service']
 
+arr_apps_list = ['readarr','prowlarr','radarr','sonarr','bazarr','lidarr']
 
 """
 Class app_monitor is decalared below with all its functions
@@ -68,6 +71,9 @@ class app_monitor():
         for j in second_instance:
             if j in docker_app:
                 docker_app.remove(j)
+        for w in arr_apps_list:
+            if w in docker_app:
+                docker_app.remove(w)
         return docker_app
 
     def sql_based_apps(self, path):
@@ -90,6 +96,14 @@ class app_monitor():
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
+            
+    def get_arr_apps(self,path):
+        remove_apps = ['backup', 'nginx']
+        all_apps = os.listdir(path)
+        installed_apps = list(set(all_apps).difference(remove_apps))
+        for i in arr_apps_list:
+            if i in installed_apps:
+                arr_apps.append(i)
 
     """
     Below given function will monitor the apps
@@ -103,11 +117,9 @@ class app_monitor():
 
     def dockerized_app(self, apps):
         for i in apps:
-            print(i)
-            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
             count = len(status.splitlines())
-            print(count)
-            if count <= 2:
+            if count <= 1:
                 os.system("app-{} upgrade".format(i))
                 print("{} app upgrade".format(i))
                 with open(log_file, "a") as f:
@@ -118,7 +130,7 @@ class app_monitor():
                 time.sleep(180)
                 status = os.popen("ps aux | grep -i {}".format(i)).read()
                 count = len(status.splitlines())
-                if count <= 2:
+                if count <= 1:
                     os.system("app-{} upgrade".format(i))
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
@@ -129,7 +141,7 @@ class app_monitor():
                 time.sleep(50)
                 status = os.popen("ps aux | grep -i {}".format(i)).read()
                 count = len(status.splitlines())
-                if count <= 2:
+                if count <= 1:
                     with open(log_file, "a") as f:
                         f.write(
                         "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
@@ -189,14 +201,84 @@ class app_monitor():
             else:
                 pass
             
-
+    def monitor_arr_apps(self):
+        all_systemd_files = os.listdir(systemd_path)
+        for i in arr_apps:
+            if "{}.service".format(i) in all_systemd_files:
+                    status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
+                    count = len(status.splitlines())
+                    if count <= 1:
+                        os.system("app-{} upgrade".format(i))
+                        print("{} app upgrade".format(i))
+                        with open(log_file, "a") as f:
+                            f.write("\nTIME: "+current_time+"\n")
+                            f.write('{} was down and has been RESTARTED'.format(i)+"\n")
+                        os.system("clear")
+            
+                        time.sleep(180)
+                        status = os.popen("ps aux | grep -i {}".format(i)).read()
+                        count = len(status.splitlines())
+                        if count <= 1:
+                            os.system("app-{} upgrade".format(i))
+                            with open(log_file, "a") as f:
+                                f.write("\nTIME: "+current_time+"\n")
+                                f.write(
+                        '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
+                        os.system("clear")
+                    
+                        time.sleep(50)
+                        status = os.popen("ps aux | grep -i {}".format(i)).read()
+                        count = len(status.splitlines())
+                        if count <= 1:
+                            with open(log_file, "a") as f:
+                                f.write(
+                                "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+                    else:
+                        pass
+            else:
+                status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    os.system("app-{} upgrade".format(i))
+                    print("{} app upgrade".format(i))
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write('{} was down and has been RESTARTED'.format(i)+"\n")
+                    os.system("clear")
+        
+                    time.sleep(180)
+                    status = os.popen("ps aux | grep -i {}".format(i)).read()
+                    count = len(status.splitlines())
+                    if count <= 0:
+                        os.system("app-{} upgrade".format(i))
+                        with open(log_file, "a") as f:
+                            f.write("\nTIME: "+current_time+"\n")
+                            f.write(
+                    '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
+                    os.system("clear")
+                
+                    time.sleep(50)
+                    status = os.popen("ps aux | grep -i {}".format(i)).read()
+                    count = len(status.splitlines())
+                    if count <= 1:
+                        with open(log_file, "a") as f:
+                            f.write(
+                            "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+                else:
+                    pass
+            
 monitor = app_monitor()
 if __name__ == '__main__':
-    monitor.Monitor_Webserver()
+    # monitor.Monitor_Webserver()
     apps = monitor.get_docker_apps(apps_path)
-    print(apps)
-    monitor.get_torrent_clients(config_path)
-    monitor.sql_based_apps(apps_path)
-    monitor.dockerized_app(apps)
-    monitor.torrent_client_fixing(torrent_client)
-    monitor.sql_app_monitor(mysql_apps)
+    print("apps:",apps)
+    print("arrs:",arr_apps)
+    # print(apps)
+    # monitor.get_torrent_clients(config_path)
+    # monitor.sql_based_apps(apps_path)
+    print("mysql",mysql_apps)
+    # print(torrent_client)
+    monitor.monitor_arr_apps()
+    # monitor.dockerized_app(apps)
+    # monitor.torrent_client_fixing(torrent_client)
+    # monitor.sql_app_monitor(mysql_apps)
