@@ -104,6 +104,9 @@ class app_monitor():
         for i in arr_apps_list:
             if i in installed_apps:
                 arr_apps.append(i)
+                
+                
+                
 
     """
     Below given function will monitor the apps
@@ -266,6 +269,73 @@ class app_monitor():
                             "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
                 else:
                     pass
+                
+    def bazarr_monitor(self):
+        if "bazarr" in arr_apps:
+            all_systemd_files = os.listdir(systemd_path)
+            if "bazarr.service" in all_systemd_files:
+                status = os.popen("ps aux | grep -i bazarr| grep -v grep").read()
+                count = len(status.splitlines())
+                if count <= 2:
+                    os.system("app-bazarr upgrade")
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write('bazarr was down and has been RESTARTED'+"\n")
+                    os.system("clear")
+        
+                    time.sleep(180)
+                    status = os.popen("ps aux | grep -i bazarr").read()
+                    count = len(status.splitlines())
+                    if count <= 2:
+                        os.system("app-bazarr upgrade")
+                        with open(log_file, "a") as f:
+                            f.write("\nTIME: "+current_time+"\n")
+                            f.write(
+                    'bazarr was down and has been RESTARTED(2nd attempt)'+"\n")
+                    os.system("clear")
+                
+                    time.sleep(50)
+                    status = os.popen("ps aux | grep -i bazarr").read()
+                    count = len(status.splitlines())
+                    if count <= 1:
+                        with open(log_file, "a") as f:
+                            f.write(
+                            "\nScript is unable to FIX your bazarr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+                else:
+                    pass
+            else:
+                status = os.popen("ps aux | grep -i bazarr| grep -v grep").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    os.system("app-bazarr upgrade")
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write('bazarr was down and has been RESTARTED'+"\n")
+                    os.system("clear")
+        
+                    time.sleep(180)
+                    status = os.popen("ps aux | grep -i bazarr").read()
+                    count = len(status.splitlines())
+                    if count <= 0:
+                        os.system("app-bazarr upgrade")
+                        with open(log_file, "a") as f:
+                            f.write("\nTIME: "+current_time+"\n")
+                            f.write(
+                    'bazarr was down and has been RESTARTED(2nd attempt)'+"\n")
+                    os.system("clear")
+                
+                    time.sleep(50)
+                    status = os.popen("ps aux | grep -i bazarr").read()
+                    count = len(status.splitlines())
+                    if count <= 0:
+                        with open(log_file, "a") as f:
+                            f.write(
+                            "\nScript is unable to FIX your bazarr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+                else:
+                    pass
+        else:
+            pass
+        
             
 monitor = app_monitor()
 if __name__ == '__main__':
