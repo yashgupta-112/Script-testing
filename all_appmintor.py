@@ -192,6 +192,7 @@ monitor = app_monitor()
 if __name__ == '__main__':
     monitor.Monitor_Webserver()
     apps = monitor.get_docker_apps(apps_path)
+    print(apps)
     monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
     monitor.dockerized_app(apps)
