@@ -103,8 +103,10 @@ class app_monitor():
 
     def dockerized_app(self, apps):
         for i in apps:
+            print(i)
             status = os.popen("ps aux | grep -i {}".format(i)).read()
             count = len(status.splitlines())
+            print(count)
             if count <= 2:
                 os.system("app-{} upgrade".format(i))
                 print("{} app upgrade".format(i))
