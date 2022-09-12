@@ -33,7 +33,7 @@ second_verify_app = []
 List of all application provide by us
 """
 all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'radarr', 'resilio', 'transmission', 'deluge',
-            'jdownloader2', 'mylar3', , 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge',
+            'jdownloader2','mylar3', 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge',
             'jellyfin', 'nextcloud', 'overseerr', 'sonarr', 'znc', 'bazarr', 'emby', 'lazylibrarian', 'plex', 'rapidleech',
             'sabnzbd', 'syncthing', 'btsync', 'filebot', 'lidarr', 'nzbget', 'readarr', 'sickbeard', 'tautulli',
             'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill', ]
@@ -153,17 +153,14 @@ class app_monitor():
     """
 
     def Monitor_Webserver(self):
-        status = os.popen("ps aux | grep -i nginx")
+        status = os.popen("ps aux | grep -i nginx |grep -v grep")
         count = len(status.readlines())
-        if count <= 2:
+        if count <= 0:
             os.system("app-nginx restart")
 
     def dockerized_app(self, apps):
         for i in apps:
-            checker = self.system_check(i)
-
-            status = os.popen(
-                "ps aux | grep -i {}| grep -v grep".format(i)).read()
+            status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
             count = len(status.splitlines())
             if count <= 0:
                 os.system("app-{} upgrade".format(i))
@@ -471,7 +468,6 @@ if __name__ == '__main__':
     # get all docker apps and insatalled apps on service
     apps = monitor.get_docker_apps(apps_path)
     monitor.get_arr_apps(apps_path)
-    monitor.get_torrent_clients(config_path)
     monitor.sql_based_apps(apps_path)
     # monitor torrent client
     monitor.torrent_client_fixing(torrent_client)
