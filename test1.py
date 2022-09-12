@@ -38,14 +38,37 @@ second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.ser
 
 arr_apps_list = ['readarr','prowlarr','radarr','sonarr','bazarr','lidarr']
 
-def system_check(self,apps):
+
+def get_docker_apps(path):
+    docker_app = []
+    remove_apps = ['backup', 'nginx']
+    all_apps = os.listdir(path)
+    installed_apps = list(set(all_apps).difference(remove_apps))
+    docker_app = list(set(all_apps).intersection(installed_apps))
+    for s in sql_apps:
+        if s in docker_app:
+            docker_app.remove(s)
+    for j in second_instance:
+        if j in docker_app:
+            docker_app.remove(j)
+    for w in arr_apps_list:
+        if w in docker_app:
+            docker_app.remove(w)
+    return docker_app
+
+def system_check(apps):
     for i in apps:
-        if i in second_instance_service:
+        if i in arr_apps_list:
             status = os.popen("systemctl --user is-failed {}.service".format(i)).read()
             staus = status.replace("\n","")
             if staus == "inactive":
                 return False
             if staus == "active":
-                return True        
+                return True
+        else:
+            pass     
+               
 s =[]
-s = system_check()
+apps = get_docker_apps(apps_path)
+s = system_check(apps)
+print(s)
