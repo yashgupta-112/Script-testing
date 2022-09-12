@@ -66,9 +66,12 @@ def system_check(apps):
             if staus == "active":
                 return True
         else:
-            pass     
+            pass
+def testing(apps):
+    for i in apps:
+        s =  system_check(i)
+        print(s)
                
 s =[]
 apps = get_docker_apps(apps_path)
-s = system_check(apps)
-print(s)
+testing()
