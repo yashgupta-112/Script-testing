@@ -43,3 +43,5 @@ def system_monitor():
     for i in all_systemd_files:
         if i in second_instance_service:
             status = os.popen("systemctl --user is-failed {}.service".format(i)).read()
+            print("app:",i)
+            print("status:",status)
