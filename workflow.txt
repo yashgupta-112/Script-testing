@@ -8,11 +8,20 @@ overserr
 0
 ('app:', 'resilio')
 0
+two process: done
 
-two process:
-
-
-('app:', 'bazarr')
+('app:', 'bazarr') make logic better with 2nd instance
 2
 ('app:', 'syncthing')
 2
+
+# system d app
+
+systemctl --user is-failed radarr.service 
+active
+
+Work FLow
+1. Function for syncthing app 
+2. Function for jdownloader2 and overserr
+3. Check systemd app status and restart them
+4. function that will dicide threshold value on basis on systemd ap

@@ -131,7 +131,7 @@ class app_monitor():
                     os.system("clear")
             
                 time.sleep(180)
-                status = os.popen("ps aux | grep -i {}".format(i)).read()
+                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
                 if count <= 1:
                     os.system("app-{} upgrade".format(i))
@@ -142,7 +142,7 @@ class app_monitor():
                     os.system("clear")
                     
                 time.sleep(50)
-                status = os.popen("ps aux | grep -i {}".format(i)).read()
+                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
                 if count <= 1:
                     with open(log_file, "a") as f:
@@ -194,7 +194,7 @@ class app_monitor():
                     os.system("clear")
             
                 time.sleep(120)
-                status = os.popen("ps aux | grep -i {}".format(i)).read()
+                status = os.popen("ps aux | grep -i {} ".format(i)).read()
                 count = len(status.splitlines())
                 if count <= 2:
                     with open(log_file, "a") as f:
@@ -219,7 +219,7 @@ class app_monitor():
                         os.system("clear")
             
                         time.sleep(180)
-                        status = os.popen("ps aux | grep -i {}".format(i)).read()
+                        status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
                         count = len(status.splitlines())
                         if count <= 1:
                             os.system("app-{} upgrade".format(i))
@@ -230,7 +230,7 @@ class app_monitor():
                         os.system("clear")
                     
                         time.sleep(50)
-                        status = os.popen("ps aux | grep -i {}".format(i)).read()
+                        status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
                         count = len(status.splitlines())
                         if count <= 1:
                             with open(log_file, "a") as f:
@@ -250,7 +250,7 @@ class app_monitor():
                     os.system("clear")
         
                     time.sleep(180)
-                    status = os.popen("ps aux | grep -i {}".format(i)).read()
+                    status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
                     count = len(status.splitlines())
                     if count <= 0:
                         os.system("app-{} upgrade".format(i))
@@ -261,7 +261,7 @@ class app_monitor():
                     os.system("clear")
                 
                     time.sleep(50)
-                    status = os.popen("ps aux | grep -i {}".format(i)).read()
+                    status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
                     count = len(status.splitlines())
                     if count <= 1:
                         with open(log_file, "a") as f:
@@ -284,7 +284,7 @@ class app_monitor():
                     os.system("clear")
         
                     time.sleep(180)
-                    status = os.popen("ps aux | grep -i bazarr").read()
+                    status = os.popen("ps aux | grep -i bazarr | grep -v grep").read()
                     count = len(status.splitlines())
                     if count <= 2:
                         os.system("app-bazarr upgrade")
@@ -295,7 +295,7 @@ class app_monitor():
                     os.system("clear")
                 
                     time.sleep(50)
-                    status = os.popen("ps aux | grep -i bazarr").read()
+                    status = os.popen("ps aux | grep -i bazarr | grep -v grep").read()
                     count = len(status.splitlines())
                     if count <= 1:
                         with open(log_file, "a") as f:
@@ -314,7 +314,7 @@ class app_monitor():
                     os.system("clear")
         
                     time.sleep(180)
-                    status = os.popen("ps aux | grep -i bazarr").read()
+                    status = os.popen("ps aux | grep -i bazarr | grep -v grep").read()
                     count = len(status.splitlines())
                     if count <= 0:
                         os.system("app-bazarr upgrade")
@@ -325,7 +325,7 @@ class app_monitor():
                     os.system("clear")
                 
                     time.sleep(50)
-                    status = os.popen("ps aux | grep -i bazarr").read()
+                    status = os.popen("ps aux | grep -i bazarr | grep -v grep").read()
                     count = len(status.splitlines())
                     if count <= 0:
                         with open(log_file, "a") as f:
@@ -335,8 +335,42 @@ class app_monitor():
                     pass
         else:
             pass
-        
+    
+    
+    def monitor_syncthing(self,apps):
+        if "syncthing" in apps:
+            status = os.popen("ps aux | grep -i syncthing | grep -v grep").read()
+            count = len(status.splitlines())
+            if count <= 0:
+                os.system("app-syncthing upgrade")
+                with open(log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('syncthing was down and has been RESTARTED'+"\n")
+                os.system("clear")
+
+                time.sleep(180)
+                status = os.popen("ps aux | grep -i syncthing | grep -v grep").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    os.system("app-syncthing upgrade")
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write(
+                'syncthing was down and has been RESTARTED(2nd attempt)'+"\n")
+                os.system("clear")
             
+                time.sleep(50)
+                status = os.popen("ps aux | grep -i syncthing | grep -v grep").read()
+                count = len(status.splitlines())
+                if count <= 1:
+                    with open(log_file, "a") as f:
+                        f.write(
+                        "\nScript is unable to FIX your syncthing so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+            else:
+                pass        
+        else:
+            pass
+    
 monitor = app_monitor()
 if __name__ == '__main__':
     # monitor.Monitor_Webserver()
