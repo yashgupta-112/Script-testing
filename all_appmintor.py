@@ -77,7 +77,7 @@ class app_monitor():
         for i in all_systemd_files:
             second_verify_app.append(i.split(".")[0])
             
-    def system_monitor():
+    def system_monitor(self):
         all_systemd_files = os.listdir(systemd_path)
         for i in all_systemd_files:
             if i in second_instance_service:
