@@ -25,15 +25,15 @@ List of apps installed on user's service
 docker_app = []
 torrent_client = []
 mysql_apps = []
-arr_apps=[]
-second_verify_app= []
+arr_apps = []
+second_verify_app = []
 
 
 """
 List of all application provide by us
 """
 all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'radarr', 'resilio', 'transmission', 'deluge',
-            'jdownloader2', 'mylar3', 'openvpn', 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge',
+            'jdownloader2', 'mylar3', , 'pyload', 'rapidleech', 'rtorrent', 'ubooquity', 'autodl', 'deluge',
             'jellyfin', 'nextcloud', 'overseerr', 'sonarr', 'znc', 'bazarr', 'emby', 'lazylibrarian', 'plex', 'rapidleech',
             'sabnzbd', 'syncthing', 'btsync', 'filebot', 'lidarr', 'nzbget', 'readarr', 'sickbeard', 'tautulli',
             'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill', ]
@@ -46,7 +46,7 @@ second_instance = ['radarr2', 'sonarr2', 'lidarr2', 'prowlarr2',
 second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.service', 'rclone-vfs.service', 'xteve.service',
                            'lidarr.service', 'radarr.service', 'whisparr.service', 'sonarr.service', 'rclone-normal.service', 'mergerfs.service', 'proftpd.service']
 
-arr_apps_list = ['readarr','prowlarr','radarr','sonarr','bazarr','lidarr']
+arr_apps_list = ['readarr', 'prowlarr', 'radarr', 'sonarr', 'bazarr', 'lidarr']
 
 """
 Class app_monitor is decalared below with all its functions
@@ -55,40 +55,42 @@ Class app_monitor is decalared below with all its functions
 
 
 class app_monitor():
-    
+
     """
     SystemD verification and monitor
-    
+
     """
-    def system_check(self,apps):
+
+    def system_check(self, apps):
         if apps in second_verify_app:
-            status = os.popen("systemctl --user is-failed {}.service".format(apps)).read()
-            staus = status.replace("\n","")
+            status = os.popen(
+                "systemctl --user is-failed {}.service".format(apps)).read()
+            staus = status.replace("\n", "")
             if staus == "inactive":
                 return False
             if staus == "active":
                 return True
             else:
                 pass
-            
+
     def systemD_verify_list(self):
         second_arr_apps = []
         all_systemd_files = os.listdir(systemd_path)
         for i in all_systemd_files:
             second_verify_app.append(i.split(".")[0])
-            
+
     def system_monitor(self):
         all_systemd_files = os.listdir(systemd_path)
         for i in all_systemd_files:
             if i in second_instance_service:
-                status = os.popen("systemctl --user is-failed {}".format(i)).read()
-                staus = status.replace("\n","")
+                status = os.popen(
+                    "systemctl --user is-failed {}".format(i)).read()
+                staus = status.replace("\n", "")
                 if staus == "inactive":
                     os.system("systemctl --user restart {}".format(i))
                 if staus == "active":
-                    pass    
-            
-    
+                    pass
+
     """
     ##################################################################
     #These below given function will get all apps intalled on service#
@@ -110,6 +112,7 @@ class app_monitor():
         for w in arr_apps_list:
             if w in docker_app:
                 docker_app.remove(w)
+        docker_app.remove("wireguard")
         return docker_app
 
     def sql_based_apps(self, path):
@@ -132,17 +135,14 @@ class app_monitor():
             torrent_client.append('qbittorrent')
         if "transmission-daemon" in all_torrent_clients:
             torrent_client.append('transmission')
-            
-    def get_arr_apps(self,path):
+
+    def get_arr_apps(self, path):
         remove_apps = ['backup', 'nginx']
         all_apps = os.listdir(path)
         installed_apps = list(set(all_apps).difference(remove_apps))
         for i in arr_apps_list:
             if i in installed_apps:
                 arr_apps.append(i)
-                
-                
-                
 
     """
     
@@ -161,8 +161,9 @@ class app_monitor():
     def dockerized_app(self, apps):
         for i in apps:
             checker = self.system_check(i)
-            
-            status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
+
+            status = os.popen(
+                "ps aux | grep -i {}| grep -v grep".format(i)).read()
             count = len(status.splitlines())
             if count <= 0:
                 os.system("app-{} upgrade".format(i))
@@ -171,29 +172,29 @@ class app_monitor():
                     f.write("\nTIME: "+current_time+"\n")
                     f.write('{} was down and has been RESTARTED'.format(i)+"\n")
                     os.system("clear")
-            
+
                 time.sleep(180)
-                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
+                status = os.popen(
+                    "ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
                 if count <= 0:
                     os.system("app-{} upgrade".format(i))
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
                         f.write(
-                        '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
+                            '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
                     os.system("clear")
-                    
+
                 time.sleep(50)
-                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
+                status = os.popen(
+                    "ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
                 if count <= 0:
                     with open(log_file, "a") as f:
                         f.write(
-                        "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+                            "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
             else:
                 pass
-
-            
 
     def torrent_client_fixing(self, apps):
         for i in apps:
@@ -203,7 +204,7 @@ class app_monitor():
                 os.system("app-{} restart".format(i))
                 with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been RESTARTED'.format(i) +"\n")
+                    f.write('{} was down and has been RESTARTED'.format(i) + "\n")
                     os.system("clear")
             else:
                 pass
@@ -232,24 +233,25 @@ class app_monitor():
                 os.system("app-{} restart".format(i))
                 with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
-                    f.write('{} was down and has been RESTARTED'.format(i)+ "\n")
+                    f.write('{} was down and has been RESTARTED'.format(i) + "\n")
                     os.system("clear")
-            
+
                 time.sleep(120)
                 status = os.popen("ps aux | grep -i {} ".format(i)).read()
                 count = len(status.splitlines())
                 if count <= 2:
                     with open(log_file, "a") as f:
                         f.write(
-                        "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+                            "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
 
             else:
                 pass
-            
+
     def monitor_arr_apps(self):
         all_systemd_files = os.listdir(systemd_path)
         for i in arr_apps:
-            status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
+            status = os.popen(
+                "ps aux | grep -i {}| grep -v grep".format(i)).read()
             count = len(status.splitlines())
             checker = self.system_check(i)
             if checker:
@@ -263,34 +265,35 @@ class app_monitor():
                     f.write("\nTIME: "+current_time+"\n")
                     f.write('{} was down and has been RESTARTED'.format(i)+"\n")
                 os.system("clear")
-    
+
                 time.sleep(180)
-                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
+                status = os.popen(
+                    "ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
                 if count <= thres:
                     os.system("app-{} upgrade".format(i))
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
                         f.write(
-                '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
+                            '{} was down and has been RESTARTED(2nd attempt)'.format(i)+"\n")
                 os.system("clear")
-            
+
                 time.sleep(50)
-                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
+                status = os.popen(
+                    "ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
                 if count <= thres:
                     with open(log_file, "a") as f:
                         f.write(
-                        "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
+                            "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
             else:
                 pass
-            
-                
+
     """
     Bazarr monitor function:
     : it have 2 process by default
     """
-                
+
     def bazarr_monitor(self):
         checker = self.system_check("bazarr")
         if checker:
@@ -300,7 +303,8 @@ class app_monitor():
         if "bazarr" in arr_apps:
             all_systemd_files = os.listdir(systemd_path)
             if "bazarr.service" in all_systemd_files:
-                status = os.popen("ps aux | grep -i bazarr| grep -v grep").read()
+                status = os.popen(
+                    "ps aux | grep -i bazarr| grep -v grep").read()
                 count = len(status.splitlines())
                 if count <= thres:
                     os.system("app-bazarr upgrade")
@@ -308,25 +312,27 @@ class app_monitor():
                         f.write("\nTIME: "+current_time+"\n")
                         f.write('bazarr was down and has been RESTARTED'+"\n")
                     os.system("clear")
-        
+
                     time.sleep(180)
-                    status = os.popen("ps aux | grep -i bazarr | grep -v grep").read()
+                    status = os.popen(
+                        "ps aux | grep -i bazarr | grep -v grep").read()
                     count = len(status.splitlines())
                     if count <= thres:
                         os.system("app-bazarr upgrade")
                         with open(log_file, "a") as f:
                             f.write("\nTIME: "+current_time+"\n")
                             f.write(
-                    'bazarr was down and has been RESTARTED(2nd attempt)'+"\n")
+                                'bazarr was down and has been RESTARTED(2nd attempt)'+"\n")
                     os.system("clear")
-                
+
                     time.sleep(50)
-                    status = os.popen("ps aux | grep -i bazarr | grep -v grep").read()
+                    status = os.popen(
+                        "ps aux | grep -i bazarr | grep -v grep").read()
                     count = len(status.splitlines())
                     if count <= thres:
                         with open(log_file, "a") as f:
                             f.write(
-                            "\nScript is unable to FIX your bazarr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+                                "\nScript is unable to FIX your bazarr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
                 else:
                     pass
         else:
@@ -336,10 +342,11 @@ class app_monitor():
     :Seprate function because it have 2 process by default
     
     """
-    
-    def monitor_syncthing(self,apps):
+
+    def monitor_syncthing(self, apps):
         if "syncthing" in apps:
-            status = os.popen("ps aux | grep -i syncthing | grep -v grep").read()
+            status = os.popen(
+                "ps aux | grep -i syncthing | grep -v grep").read()
             count = len(status.splitlines())
             if count <= 0:
                 os.system("app-syncthing upgrade")
@@ -349,36 +356,39 @@ class app_monitor():
                 os.system("clear")
 
                 time.sleep(180)
-                status = os.popen("ps aux | grep -i syncthing | grep -v grep").read()
+                status = os.popen(
+                    "ps aux | grep -i syncthing | grep -v grep").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     os.system("app-syncthing upgrade")
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
                         f.write(
-                'syncthing was down and has been RESTARTED(2nd attempt)'+"\n")
+                            'syncthing was down and has been RESTARTED(2nd attempt)'+"\n")
                 os.system("clear")
-            
+
                 time.sleep(50)
-                status = os.popen("ps aux | grep -i syncthing | grep -v grep").read()
+                status = os.popen(
+                    "ps aux | grep -i syncthing | grep -v grep").read()
                 count = len(status.splitlines())
                 if count <= 1:
                     with open(log_file, "a") as f:
                         f.write(
-                        "\nScript is unable to FIX your syncthing so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+                            "\nScript is unable to FIX your syncthing so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
             else:
-                pass        
+                pass
         else:
             pass
-        
-        
+
         """
         Jdownloader2 monitor function 
         : To grep unique process of jdownloader2
         """
-    def monitor_jdownloader(self,apps):
+
+    def monitor_jdownloader(self, apps):
         if "jdownloader2" in apps:
-            status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
+            status = os.popen(
+                "ps aux | grep /usr/bin/openbox | grep -v grep ").read()
             count = len(status.splitlines())
             if count == 0:
                 os.system("app-jdownloader2 upgrade")
@@ -387,35 +397,38 @@ class app_monitor():
                     f.write('Jdownloader2 was down and has been RESTARTED'+"\n")
                 os.system("clear")
                 time.sleep(180)
-                status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
+                status = os.popen(
+                    "ps aux | grep /usr/bin/openbox | grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     os.system("app-jdownloader2 upgrade")
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
-                        f.write('jdownloader2 was down and has been RESTARTED(2nd attempt)'+"\n")
+                        f.write(
+                            'jdownloader2 was down and has been RESTARTED(2nd attempt)'+"\n")
                     os.system("clear")
                 time.sleep(50)
-                status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
+                status = os.popen(
+                    "ps aux | grep /usr/bin/openbox | grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     with open(log_file, "a") as f:
                         f.write(
-                "\nScript is unable to FIX your jdownloader2 so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+                            "\nScript is unable to FIX your jdownloader2 so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
             else:
                 pass
         else:
             pass
-        
-        
+
     """
     Overseerr monitor function
     
     """
-    
-    def monitor_overserr(self,apps):
+
+    def monitor_overserr(self, apps):
         if "overseerr" in apps:
-            status = os.popen("ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+            status = os.popen(
+                "ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
             count = len(status.splitlines())
             if count == 0:
                 os.system("app-overseerr upgrade")
@@ -424,28 +437,30 @@ class app_monitor():
                     f.write('overseerr was down and has been RESTARTED'+"\n")
                 os.system("clear")
                 time.sleep(180)
-                status = os.popen("ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+                status = os.popen(
+                    "ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     os.system("app-overseerr upgrade")
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
-                        f.write('overseerr was down and has been RESTARTED(2nd attempt)'+"\n")
+                        f.write(
+                            'overseerr was down and has been RESTARTED(2nd attempt)'+"\n")
                     os.system("clear")
                 time.sleep(50)
-                status = os.popen("ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+                status = os.popen(
+                    "ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     with open(log_file, "a") as f:
                         f.write(
-                    "\nScript is unable to FIX your overseerr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+                            "\nScript is unable to FIX your overseerr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
             else:
                 pass
         else:
             pass
-        
-      
-        
+
+
 monitor = app_monitor()
 if __name__ == '__main__':
     # check webserver is running or not
