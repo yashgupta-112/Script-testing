@@ -41,7 +41,6 @@ arr_apps_list = ['readarr','prowlarr','radarr','sonarr','bazarr','lidarr']
 def system_monitor():
     all_systemd_files = os.listdir(systemd_path)
     for i in all_systemd_files:
-        print(i)
         if i in second_instance_service:
             status = os.popen("systemctl --user is-failed {}.service".format(i)).read()
             print("app:",i)
