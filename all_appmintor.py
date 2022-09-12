@@ -90,6 +90,8 @@ class app_monitor():
                     os.system("systemctl --user restart {}".format(i))
                 if staus == "active":
                     pass
+            else:
+                pass
 
     """
     ##################################################################
@@ -112,6 +114,8 @@ class app_monitor():
         for w in arr_apps_list:
             if w in docker_app:
                 docker_app.remove(w)
+            else:
+                pass
         if "wireguard" in all_apps:
             docker_app.remove("wireguard")
         if "overseerr" in all_apps:
