@@ -38,54 +38,8 @@ second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.ser
 
 arr_apps_list = ['readarr','prowlarr','radarr','sonarr','bazarr','lidarr']
 
-def get_docker_apps( path):
-    docker_app = []
-    remove_apps = ['backup', 'nginx']
-    all_apps = os.listdir(path)
-    installed_apps = list(set(all_apps).difference(remove_apps))
-    docker_app = list(set(all_apps).intersection(installed_apps))
-    for s in sql_apps:
-        if s in docker_app:
-            docker_app.remove(s)
-    for j in second_instance:
-        if j in docker_app:
-            docker_app.remove(j)
-    for w in arr_apps_list:
-        if w in docker_app:
-            docker_app.remove(w)
-    return docker_app
-
-def monitor_jdownloader(apps):
-    if "jdownloader2" in apps:
-        status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
-        count = len(status.splitlines())
-        if count == 0:
-            os.system("app-jdownloader2 upgrade")
-            with open(log_file, "a") as f:
-                f.write("\nTIME: "+current_time+"\n")
-                f.write('Jdownloader2 was down and has been RESTARTED'+"\n")
-            os.system("clear")
-            time.sleep(180)
-            status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
-            count = len(status.splitlines())
-            if count <= 0:
-                os.system("app-jdownloader2 upgrade")
-                with open(log_file, "a") as f:
-                    f.write("\nTIME: "+current_time+"\n")
-                    f.write('bazarr was down and has been RESTARTED(2nd attempt)'+"\n")
-                os.system("clear")
-            time.sleep(50)
-            status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
-            count = len(status.splitlines())
-            if count <= 0:
-                with open(log_file, "a") as f:
-                    f.write(
-                "\nScript is unable to FIX your bazarr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
-        else:
-            pass
-    else:
-        print("no jdownloader2 installed")
-
-
-apps = get_docker_apps(apps_path)
-monitor_jdownloader(apps)
+def system_monitor():
+    all_systemd_files = os.listdir(systemd_path)
+    for i in all_systemd_files:
+        if i in second_instance_service:
+            status = os.popen("systemctl --user is-failed {}.service".format(i)).read()

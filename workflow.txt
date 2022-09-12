@@ -21,7 +21,7 @@ systemctl --user is-failed radarr.service
 active
 
 Work FLow
-1. Function for syncthing app 
-2. Function for jdownloader2 and overserr
+1. Function for syncthing app done
+2. Function for jdownloader2 and overserr done
 3. Check systemd app status and restart them
 4. function that will dicide threshold value on basis on systemd ap

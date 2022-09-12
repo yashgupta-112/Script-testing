@@ -109,7 +109,11 @@ class app_monitor():
                 
 
     """
-    Below given function will monitor the apps
+    
+    ############################################
+    #Below given function will monitor the apps#
+    ############################################
+    
     """
 
     def Monitor_Webserver(self):
@@ -270,6 +274,11 @@ class app_monitor():
                 else:
                     pass
                 
+    """
+    Bazarr monitor function:
+    : it have 2 process by default
+    """
+                
     def bazarr_monitor(self):
         if "bazarr" in arr_apps:
             all_systemd_files = os.listdir(systemd_path)
@@ -335,7 +344,11 @@ class app_monitor():
                     pass
         else:
             pass
+    """
+    Syncthing function
+    :Seprate function because it have 2 process by default
     
+    """
     
     def monitor_syncthing(self,apps):
         if "syncthing" in apps:
@@ -370,7 +383,80 @@ class app_monitor():
                 pass        
         else:
             pass
+        
+        
+        """
+        Jdownloader2 monitor function 
+        : To grep unique process of jdownloader2
+        """
+    def monitor_jdownloader(self,apps):
+        if "jdownloader2" in apps:
+            status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
+            count = len(status.splitlines())
+            if count == 0:
+                os.system("app-jdownloader2 upgrade")
+                with open(log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('Jdownloader2 was down and has been RESTARTED'+"\n")
+                os.system("clear")
+                time.sleep(180)
+                status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    os.system("app-jdownloader2 upgrade")
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write('jdownloader2 was down and has been RESTARTED(2nd attempt)'+"\n")
+                    os.system("clear")
+                time.sleep(50)
+                status = os.popen("ps aux | grep /usr/bin/openbox | grep -v grep ").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    with open(log_file, "a") as f:
+                        f.write(
+                "\nScript is unable to FIX your jdownloader2 so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+            else:
+                pass
+        else:
+            pass
+        
+        
+    """
+    Overseerr monitor function
     
+    """
+    
+    def monitor_overserr(self,apps):
+        if "overseerr" in apps:
+            status = os.popen("ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+            count = len(status.splitlines())
+            if count == 0:
+                os.system("app-overseerr upgrade")
+                with open(log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('overseerr was down and has been RESTARTED'+"\n")
+                os.system("clear")
+                time.sleep(180)
+                status = os.popen("ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    os.system("app-overseerr upgrade")
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write('overseerr was down and has been RESTARTED(2nd attempt)'+"\n")
+                    os.system("clear")
+                time.sleep(50)
+                status = os.popen("ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    with open(log_file, "a") as f:
+                        f.write(
+                    "\nScript is unable to FIX your overseerr so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+            else:
+                pass
+        else:
+            pass
+        
 monitor = app_monitor()
 if __name__ == '__main__':
     # monitor.Monitor_Webserver()
