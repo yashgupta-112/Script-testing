@@ -25,3 +25,10 @@ Work FLow
 2. Function for jdownloader2 and overserr done
 3. Check systemd app status and restart them
 4. function that will dicide threshold value on basis on systemd ap
+
+
+
+resilio: rslsync --nodaemon --config /config/sync.conf
+nextlcoud:
+mariadb: 
+pydio:

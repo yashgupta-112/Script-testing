@@ -112,7 +112,12 @@ class app_monitor():
         for w in arr_apps_list:
             if w in docker_app:
                 docker_app.remove(w)
-        docker_app.remove("wireguard")
+        if "wireguard" in all_apps:
+            docker_app.remove("wireguard")
+        if "overseerr" in all_apps:
+            docker_app.remove("overseerr")
+        if "jdownloader2" in all_apps:
+            docker_app.remove("jdownloader2")
         return docker_app
 
     def sql_based_apps(self, path):
@@ -224,9 +229,9 @@ class app_monitor():
 
     def sql_app_monitor(self, apps):
         for i in apps:
-            status = os.popen("ps aux | grep -i {}".format(i)).read()
+            status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
             count = len(status.splitlines())
-            if count <= 2:
+            if count <= 0:
                 os.system("app-{} restart".format(i))
                 with open(log_file, "a") as f:
                     f.write("\nTIME: "+current_time+"\n")
@@ -234,9 +239,9 @@ class app_monitor():
                     os.system("clear")
 
                 time.sleep(120)
-                status = os.popen("ps aux | grep -i {} ".format(i)).read()
+                status = os.popen("ps aux | grep -i {} | grep -v grep ".format(i)).read()
                 count = len(status.splitlines())
-                if count <= 2:
+                if count <= 0:
                     with open(log_file, "a") as f:
                         f.write(
                             "\nScript is unable to FIX your {} so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n".format(i))
