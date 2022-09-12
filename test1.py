@@ -42,9 +42,10 @@ def system_monitor():
     all_systemd_files = os.listdir(systemd_path)
     for i in all_systemd_files:
         if i in second_instance_service:
-            status = os.popen("systemctl --user is-failed {}.service".format(i)).read()
-            print("app:",i)
-            print("status:",status)
-            
-            
+            status = os.popen("systemctl --user is-failed {}".format(i)).read()
+            staus = status.replace("\n","")
+            if staus == "inactive":
+                print("inactive app {}".format(i))
+            if staus == "active":
+                print("active app {}".format(i))            
 system_monitor()
