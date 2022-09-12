@@ -70,7 +70,12 @@ def system_check(apps):
 def testing(apps):
     for i in apps:
         s =  system_check(i)
-        print(s)
+        if s:
+            count = 1
+        else:
+            count = 2
+        print(count)
+        
                
 s =[]
 apps = get_docker_apps(apps_path)
