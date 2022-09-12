@@ -44,7 +44,7 @@ second_instance = ['radarr2', 'sonarr2', 'lidarr2', 'prowlarr2',
                    'whisparr2', 'bazarr2', 'readarr2', 'autobrr', 'navidrome']
 
 second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.service', 'rclone-vfs.service', 'xteve.service',
-                           'lidarr.service', 'radarr.service', 'whisparr.service', 'sonarr.service', 'rclone-normal.service', 'mergerfs.service', 'proftpd.service']
+                           'lidarr.service', 'radarr.service','bazarr.service', 'whisparr.service', 'sonarr.service', 'rclone-normal.service', 'mergerfs.service', 'proftpd.service']
 
 arr_apps_list = ['readarr', 'prowlarr', 'radarr', 'sonarr', 'bazarr', 'lidarr']
 
