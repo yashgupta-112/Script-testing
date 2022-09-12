@@ -108,9 +108,13 @@ class app_monitor():
         for s in sql_apps:
             if s in docker_app:
                 docker_app.remove(s)
+            else:
+                pass
         for j in second_instance:
             if j in docker_app:
                 docker_app.remove(j)
+            else:
+                pass
         for w in arr_apps_list:
             if w in docker_app:
                 docker_app.remove(w)
