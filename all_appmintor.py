@@ -457,6 +457,17 @@ class app_monitor():
         else:
             pass
         
+    def system_monitor():
+        all_systemd_files = os.listdir(systemd_path)
+        for i in all_systemd_files:
+            if i in second_instance_service:
+                status = os.popen("systemctl --user is-failed {}".format(i)).read()
+                staus = status.replace("\n","")
+                if staus == "inactive":
+                    os.system("systemctl --user restart {}".format(i))
+                if staus == "active":
+                    pass          
+        
 monitor = app_monitor()
 if __name__ == '__main__':
     # monitor.Monitor_Webserver()

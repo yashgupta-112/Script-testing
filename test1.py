@@ -38,15 +38,14 @@ second_instance_service = ['autobrr.service', 'navidrome.service', 'prowlarr.ser
 
 arr_apps_list = ['readarr','prowlarr','radarr','sonarr','bazarr','lidarr']
 
-def system_monitor():
-    all_systemd_files = os.listdir(systemd_path)
-    for i in all_systemd_files:
+def system_check(self,apps):
+    for i in apps:
         if i in second_instance_service:
-            status = os.popen("systemctl --user is-failed {}".format(i)).read()
+            status = os.popen("systemctl --user is-failed {}.service".format(i)).read()
             staus = status.replace("\n","")
             if staus == "inactive":
-                os.system("systemctl --user restart {}".format(i))
+                return False
             if staus == "active":
-                pass          
-
-system_monitor()
+                return True        
+s =[]
+s = system_check()
