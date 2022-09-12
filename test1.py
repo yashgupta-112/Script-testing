@@ -45,7 +45,7 @@ def system_monitor():
             status = os.popen("systemctl --user is-failed {}".format(i)).read()
             staus = status.replace("\n","")
             if staus == "inactive":
-                os.system("systemctl -- restart {}".format(i))
+                os.system("systemctl --user restart {}".format(i))
             if staus == "active":
                 pass          
 
