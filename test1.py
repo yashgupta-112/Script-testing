@@ -79,4 +79,4 @@ def testing(apps):
                
 s =[]
 apps = get_docker_apps(apps_path)
-testing()
+testing(apps)
