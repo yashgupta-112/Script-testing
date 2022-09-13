@@ -38,7 +38,7 @@ all_apps = ['airsonic', 'couchpotato', 'jackett', 'medusa', 'ombi', 'pydio', 'ra
             'sabnzbd', 'syncthing', 'btsync', 'filebot', 'lidarr', 'nzbget', 'readarr', 'sickbeard', 'tautulli',
             'filebrowser', 'mariadb', 'nzbhydra2', 'prowlarr', 'qbittorrent', 'requestrr', 'sickchill', ]
 
-sql_apps = ['mariadb', 'filebrowser', 'nextcloud', 'pydio', 'thelounge']
+sql_apps = ['mariadb', 'filebrowser', 'nextcloud', 'thelounge']
 
 second_instance = ['radarr2', 'sonarr2', 'lidarr2', 'prowlarr2',
                    'whisparr2', 'bazarr2', 'readarr2', 'autobrr', 'navidrome']
@@ -429,6 +429,40 @@ class app_monitor():
                 pass
         else:
             pass
+        
+    def monitor_resilio(self, apps):
+        if "resilio" in apps:
+            status = os.popen("ps aux | grep 'rslsync --nodaemon --config /config/sync.conf' | grep -v grep ").read()
+            count = len(status.splitlines())
+            if count == 0:
+                os.system("app-resilio upgrade")
+                with open(log_file, "a") as f:
+                    f.write("\nTIME: "+current_time+"\n")
+                    f.write('resilio was down and has been RESTARTED'+"\n")
+                os.system("clear")
+                time.sleep(180)
+                status = os.popen(
+                    "ps aux | grep 'rslsync --nodaemon --config /config/sync.conf' | grep -v grep ").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    os.system("app-resilio upgrade")
+                    with open(log_file, "a") as f:
+                        f.write("\nTIME: "+current_time+"\n")
+                        f.write(
+                            'resilio was down and has been RESTARTED(2nd attempt)'+"\n")
+                    os.system("clear")
+                time.sleep(50)
+                status = os.popen(
+                    "ps aux | grep 'rslsync --nodaemon --config /config/sync.conf' | grep -v grep ").read()
+                count = len(status.splitlines())
+                if count <= 0:
+                    with open(log_file, "a") as f:
+                        f.write(
+                            "\nScript is unable to FIX your resilio so please open a support ticket from here - https://my.ultraseedbox.com/submitticket.php\n")
+            else:
+                pass
+        else:
+            pass
 
     """
     Overseerr monitor function
@@ -483,7 +517,6 @@ if __name__ == '__main__':
     monitor.get_arr_apps(apps_path)
     monitor.sql_based_apps(apps_path)
     # monitor torrent client
-    monitor.torrent_client_fixing(torrent_client)
     monitor.dockerized_app(apps)
     monitor.monitor_arr_apps()
     monitor.sql_app_monitor(mysql_apps)
@@ -491,3 +524,4 @@ if __name__ == '__main__':
     monitor.monitor_syncthing(apps)
     monitor.monitor_jdownloader(apps)
     monitor.bazarr_monitor()
+    monitor.monitor_resilio(apps)
