@@ -128,10 +128,6 @@ class app_monitor():
                 pass
         if "wireguard" in all_apps:
             docker_app.remove("wireguard")
-        if "overseerr" in all_apps:
-            docker_app.remove("overseerr")
-        if "jdownloader2" in all_apps:
-            docker_app.remove("jdownloader2")
         return docker_app
 
     def sql_based_apps(self, path):
@@ -189,7 +185,7 @@ class app_monitor():
                     f.write('{} was down and has been RESTARTED'.format(i)+"\n")
                     os.system("clear")
 
-                time.sleep(180)
+                time.sleep(120)
                 status = os.popen(
                     "ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
@@ -456,7 +452,7 @@ class app_monitor():
                 os.system("clear")
                 time.sleep(180)
                 status = os.popen(
-                    "ps aux | grep 'rslsync --nodaemon --config /config/sync.conf' | grep -v grep ").read()
+                    "ps aux | grep 'rslsync --nodaemon --config /config/sync.conf'| grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     os.system("app-resilio upgrade")
@@ -467,7 +463,7 @@ class app_monitor():
                     os.system("clear")
                 time.sleep(50)
                 status = os.popen(
-                    "ps aux | grep 'rslsync --nodaemon --config /config/sync.conf' | grep -v grep ").read()
+                    "ps aux | grep 'rslsync --nodaemon --config /config/sync.conf'| grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     with open(log_file, "a") as f:
@@ -496,7 +492,7 @@ class app_monitor():
                 os.system("clear")
                 time.sleep(180)
                 status = os.popen(
-                    "ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+                    "ps aux | grep '/usr/bin/node dist/index.js'| grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     os.system("app-overseerr upgrade")
@@ -507,7 +503,7 @@ class app_monitor():
                     os.system("clear")
                 time.sleep(50)
                 status = os.popen(
-                    "ps aux | grep '/usr/bin/node dist/index.js' | grep -v grep ").read()
+                    "ps aux | grep '/usr/bin/node dist/index.js'| grep -v grep ").read()
                 count = len(status.splitlines())
                 if count <= 0:
                     with open(log_file, "a") as f:
