@@ -95,6 +95,7 @@ class app_monitor():
     
     def sql_app_monitor(self, apps):
         for i in apps:
+            print(i)
             if i == "nextlcoud":
                 status = os.popen("ps aux | grep -i '/usr/local/bin/supercronic /etc/crontabs/abc' | grep -v grep".format(i)).read()
                 count = len(status.splitlines())    
@@ -128,4 +129,5 @@ monitor = app_monitor()
 if __name__ == '__main__':
     apps = monitor.get_docker_apps(apps_path)
     monitor.sql_based_apps(apps_path)
-    monitor.sql_based_apps(apps_path)
+    print(mysql_apps)
+    monitor.sql_app_monitor(mysql_apps)
