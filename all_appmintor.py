@@ -62,6 +62,12 @@ class app_monitor():
     """
 
     def system_check(self, apps):
+        status1 = os.popen("systemctl --user status | grep 'State:'").read()
+        status1 = status1.split(":")[1].replace(' ', '').replace("\n","")
+        if status1 == "running":
+            pass
+        else:
+            os.system("systemctl --user reset-failed")
         if apps in second_verify_app:
             status = os.popen(
                 "systemctl --user is-failed {}.service".format(apps)).read()
@@ -237,8 +243,12 @@ class app_monitor():
 
     def sql_app_monitor(self, apps):
         for i in apps:
-            status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
-            count = len(status.splitlines())
+            if i == "nextlcoud":
+                status = os.popen("ps aux | grep -i '/usr/local/bin/supercronic /etc/crontabs/abc' | grep -v grep".format(i)).read()
+                count = len(status.splitlines())    
+            else:
+                status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
+                count = len(status.splitlines())
             if count <= 0:
                 os.system("app-{} restart".format(i))
                 with open(log_file, "a") as f:
@@ -246,9 +256,13 @@ class app_monitor():
                     f.write('{} was down and has been RESTARTED'.format(i) + "\n")
                     os.system("clear")
 
-                time.sleep(120)
-                status = os.popen("ps aux | grep -i {} | grep -v grep ".format(i)).read()
-                count = len(status.splitlines())
+                time.sleep(30)
+                if i == "nextlcoud":
+                    status = os.popen("ps aux | grep -i '/usr/local/bin/supercronic /etc/crontabs/abc' | grep -v grep".format(i)).read()
+                    count = len(status.splitlines())    
+                else:
+                    status = os.popen("ps aux | grep -i {} | grep -v grep".format(i)).read()
+                    count = len(status.splitlines())
                 if count <= 0:
                     with open(log_file, "a") as f:
                         f.write(

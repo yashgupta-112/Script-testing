@@ -44,10 +44,10 @@ installer(){
     ) | crontab -
 
 
- croncmd="/usr/bin/python3 $HOME/scripts/app_monitor/all_torrent_client.py > /dev/null 2>&1"
-    cronjob="*/5 * * * * $croncmd"
+    croncmd1="/usr/bin/python3 $HOME/scripts/app_monitor/all_torrent_client.py > /dev/null 2>&1"
+    cronjob="*/5 * * * * $croncmd1"
     (
-        crontab -l 2>/dev/null | grep -v -F "$croncmd" || :
+        crontab -l 2>/dev/null | grep -v -F "$croncmd1" || :
         echo "$cronjob"
     ) | crontab -
 }
