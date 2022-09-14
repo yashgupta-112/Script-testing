@@ -4,35 +4,35 @@ printf "\033[0;31mThis script will monitor your app and restart your installated
 printf "\033[0;31mDisclaimer: This installer is unofficial and Ultra.cc staff will not support any issues with it.\033[0m\n"
 read -rp "Type confirm if you wish to continue: " input
 if [ ! "$input" = "confirm" ]; then
-  exit
+    exit
 fi
 
 yes_no() {
-  select choice in "yes" "no"; do
-    case ${choice} in
-    yes)
-      break
-      ;;
-    no)
-      exit 0
-      ;;
-    *)
-      echo "Invalid option $REPLY."
-      ;;
-    esac
-  done
-  echo
+    select choice in "Yes" "No"; do
+        case ${choice} in
+        Yes)
+            break
+            ;;
+        No)
+            exit 0
+            ;;
+        *)
+            echo "Invalid option $REPLY."
+            ;;
+        esac
+    done
+    echo
 }
 
 # install function
 
-installer(){
+installer() {
     if [ ! -d "$HOME/scripts/app_monitor" ]; then
         mkdir -p "$HOME/scripts/app_monitor"
     fi
 
-    wget -q -P "${HOME}/scripts/app_monitor/" https://raw.githubusercontent.com/yashgupta-112/Script-testing/master/all_appmintor.py
-    wget -q -P "${HOME}/scripts/app_monitor/" https://raw.githubusercontent.com/yashgupta-112/Script-testing/master/all_torrent_client.py
+    wget -q -P "${HOME}/scripts/app_monitor/" https://scripts.usbx.me/util/All_app_monitor/all_appmonitor.py
+    wget -q -P "${HOME}/scripts/app_monitor/" https://scripts.usbx.me/util/All_app_monitor/all_torrent_client.py
 
     clear
 
@@ -43,7 +43,6 @@ installer(){
         echo "$cronjob"
     ) | crontab -
 
-
     croncmd1="/usr/bin/python3 $HOME/scripts/app_monitor/all_torrent_client.py > /dev/null 2>&1"
     cronjob="*/5 * * * * $croncmd1"
     (
@@ -51,7 +50,6 @@ installer(){
         echo "$cronjob"
     ) | crontab -
 }
-
 
 uninstall() {
     rm -rf "${HOME}/scripts/app_monitor"
@@ -61,14 +59,13 @@ uninstall() {
     clear
 }
 
-
 if [ ! -d "$HOME/scripts/app_monitor" ]; then
-   installer 
+    installer
 
 else
-  echo "The script is already installed. Do you wish to uninstall it?"
-  yes_no
-  uninstall
+    echo "The script is already installed. Do you wish to uninstall it?"
+    yes_no
+    uninstall
 fi
 
 exit 0
