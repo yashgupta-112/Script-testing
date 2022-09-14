@@ -177,7 +177,7 @@ class app_monitor():
         for i in apps:
             status = os.popen("ps aux | grep -i {}| grep -v grep".format(i)).read()
             count = len(status.splitlines())
-            if count <= 0:
+            if count == 0:
                 os.system("app-{} upgrade".format(i))
                 print("{} app upgrade".format(i))
                 with open(log_file, "a") as f:
@@ -189,7 +189,7 @@ class app_monitor():
                 status = os.popen(
                     "ps aux | grep -i {} | grep -v grep".format(i)).read()
                 count = len(status.splitlines())
-                if count <= 0:
+                if count == 0:
                     os.system("app-{} upgrade".format(i))
                     with open(log_file, "a") as f:
                         f.write("\nTIME: "+current_time+"\n")
