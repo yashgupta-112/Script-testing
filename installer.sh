@@ -66,9 +66,9 @@ if [ ! -d "$HOME/scripts/app_monitor" ]; then
    installer 
 
 else
-    echo "The script is already installed. Do you wish to uninstall it?"
-    yes_no
-    uninstall
+  echo "The script is already installed. Do you wish to uninstall it?"
+  yes_no
+  uninstall
 fi
 
 exit 0
