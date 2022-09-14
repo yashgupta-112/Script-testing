@@ -7,7 +7,22 @@ if [ ! "$input" = "confirm" ]; then
   exit
 fi
 
-
+yes_no() {
+  select choice in "yes" "no"; do
+    case ${choice} in
+    yes)
+      break
+      ;;
+    no)
+      exit 0
+      ;;
+    *)
+      echo "Invalid option $REPLY."
+      ;;
+    esac
+  done
+  echo
+}
 
 # install function
 
@@ -22,7 +37,7 @@ installer(){
     clear
 
     croncmd="/usr/bin/python3 $HOME/scripts/app_monitor/all_appmonitor.py > /dev/null 2>&1"
-    cronjob="*/45 * * * * $croncmd"
+    cronjob="*/30 * * * * $croncmd"
     (
         crontab -l 2>/dev/null | grep -v -F "$croncmd" || :
         echo "$cronjob"
@@ -52,6 +67,7 @@ if [ ! -d "$HOME/scripts/app_monitor" ]; then
 
 else
     echo "The script is already installed. Do you wish to uninstall it?"
+    yes_no
     uninstall
 fi
 
