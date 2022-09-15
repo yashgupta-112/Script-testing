@@ -1,10 +1,13 @@
 import os
+from xml.dom.expatbuilder import ParseEscape
 import requests
 import re
 work_dir = os.getcwd()
 config_path = work_dir + '/bin'
 
 Discord_WebHook_File = '{}/scripts/quota_check/discord.txt'.format(work_dir)
+
+threshold = 90
 
 class Quota_check():
     """
@@ -32,10 +35,17 @@ class Quota_check():
        Used_Quota_Value = re.sub("[^0-9]", "", Quota[17]) # output 133
        Used_Quota_metric = re.sub("[^A-Z]", "", Quota[17]) # M
        Quota_Limit = re.sub("[^0-9]", "", Quota[19]) # quota limit value
-       print(Used_Quota_metric)
-       print(Used_Quota_Value)
-       print(Quota_Limit)
+       return Used_Quota_metric, Used_Quota_Value, Quota_Limit
     
+    def quota_percentage(self,Used_Quota_metric,Used_Quota_Value,Quota_Limit):
+        if Used_Quota_metric == "G":
+            quota_percent = (Used_Quota_Value/Quota_Limit) * 100
+        if Used_Quota_metric == "M":
+            Used_Quota_Value = Used_Quota_Value * 0.1027
+            quota_percent = (Used_Quota_Value/Quota_Limit) * 100
+        else:
+            pass
+        print(quota_percent)
     
     def compare_quota(self,threshold):
         pass
@@ -63,4 +73,6 @@ class Quota_check():
 
 checker = Quota_check()
 if __name__ == '__main__':
-    checker.get_quota_value()
+    Used_Quota_metric, Used_Quota_Value, Quota_Limit = checker.get_quota_value()
+    print(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
+    checker.quota_percentage(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
