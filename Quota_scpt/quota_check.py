@@ -41,7 +41,7 @@ class Quota_check():
         if Used_Quota_metric == "G":
             quota_percent = (Used_Quota_Value/Quota_Limit) * 100
         if Used_Quota_metric == "M":
-            Used_Quota_Value = Used_Quota_Value * 0.1027
+            Used_Quota_Value = float(Used_Quota_Value * 0.1027)
             quota_percent = (Used_Quota_Value/Quota_Limit) * 100
         else:
             pass
