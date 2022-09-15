@@ -1,5 +1,4 @@
 import os
-from xml.dom.expatbuilder import ParseEscape
 import requests
 import re
 work_dir = os.getcwd()
@@ -38,10 +37,12 @@ class Quota_check():
        return Used_Quota_metric, Used_Quota_Value, Quota_Limit
     
     def quota_percentage(self,Used_Quota_metric,Used_Quota_Value,Quota_Limit):
+        Used_Quota_Value = float(Used_Quota_Value)
+        Quota_Limit = float(Quota_Limit)
         if Used_Quota_metric == "G":
-            quota_percent = (Used_Quota_Value/Quota_Limit) * 100
+            quota_percent = (Used_Quota_Value / Quota_Limit) * 100
         if Used_Quota_metric == "M":
-            Used_Quota_Value = float(Used_Quota_Value * 0.1027)
+            Used_Quota_Value = Used_Quota_Value * 0.1027
             quota_percent = (Used_Quota_Value/Quota_Limit) * 100
         else:
             pass
