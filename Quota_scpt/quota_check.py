@@ -1,9 +1,10 @@
 import os
 import requests
-
+import re
 work_dir = os.getcwd()
 config_path = work_dir + '/bin'
 
+Discord_WebHook_File = '{}/scripts/quota_check/discord.txt'.format(work_dir)
 
 class Quota_check():
     """
@@ -27,19 +28,37 @@ class Quota_check():
         return torrent_client
     
     def get_quota_value(self):
-       QuotaOutPut = os.popen("quota -s 2>/dev/null").read()
-       QuotaFormat = os.popen("echo {} | awk 'END{print substr($2, length($2))}'".format(QuotaOutPut)).read()
-       QuotaUsed = os.popen("echo '{}' | awk 'END{print substr($2, 1, length($2)-1))}'".format(QuotaOutPut)).read()
-       print("quotaused",QuotaUsed)
-       print(QuotaFormat)
-       print(QuotaOutPut)
+       Quota = os.popen("quota -s 2>/dev/null").read().split() # example 133M
+       Used_Quota_Value = re.sub("[^0-9]", "", Quota[17]) # output 133
+       Used_Quota_metric = re.sub("[^A-Z]", "", Quota[17]) # M
+       Quota_Limit = re.sub("[^0-9]", "", Quota[19]) # quota limit value
+       print(Used_Quota_metric)
+       print(Used_Quota_Value)
+       print(Quota_Limit)
     
     
     def compare_quota(self,threshold):
         pass
+
+
+    """
+    Discord functions are below
+    """
     
-    def send_discord_notification(self,WebHookURL):
-        pass
+    def Discord_Notifications_Accepter(self):
+        Web_Url = input("Please enter your Discord Web Hook Url Here:")
+        with open(Discord_WebHook_File, '+w') as f:
+            f.write(Web_Url)
+        f.close()
+    
+        
+    def Discord_WebHook_Reader(self):
+        with open(Discord_WebHook_File, 'r') as f:
+            return f.read()
+        
+    def Discord_notification_(self,webhook):
+        data = {"content": '**You are going to hit your disk quota please delete some data or upgrade your service to larger plan** :)'}
+        response = requests.post(webhook, json=data)
     
 
 checker = Quota_check()
