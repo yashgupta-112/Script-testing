@@ -29,7 +29,7 @@ class Quota_check():
     def get_quota_value(self):
        QuotaOutPut = os.popen("quota -s 2>/dev/null").read()
        QuotaFormat = os.popen("echo '{}' | awk 'END{print substr($2, length($2))}'".format(QuotaOutPut)).read()
-       QuotaUsed = os.popen("echo '{}' | awk 'END{print substr($2, 1, length($2)-1)}'".format(QuotaOutPut)).read()
+       QuotaUsed = os.popen("echo '{}' | awk 'END{print substr($2, 1, length($2)-1))}'".format(QuotaOutPut)).read()
        print("quotaused",QuotaUsed)
        print(QuotaFormat)
        print(QuotaOutPut)
