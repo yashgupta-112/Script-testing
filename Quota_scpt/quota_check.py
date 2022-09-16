@@ -70,6 +70,8 @@ class Quota_check():
         if alert:
             data = {"content": '**You are going to hit your disk quota please delete some data or upgrade your service to larger plan** :)'}
             response = requests.post(webhook, json=data)
+        else:
+            print("no need of it")
             
     def stop_torrent_client(self,choice,torrent_client):
         if choice == "yes" or "Yes":
@@ -108,4 +110,4 @@ if __name__ == '__main__':
         Used_Quota_metric, Used_Quota_Value, Quota_Limit = checker.get_quota_value()
         quota_percent = checker.quota_percentage(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
         alert = checker.compare_quota(threshold,quota_percent)
-        print(alert)
+        checker.Discord_notification_(url, alert)
