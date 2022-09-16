@@ -73,12 +73,10 @@ class Quota_check():
         else:
             print("no need of it")
             
-    def stop_torrent_client(self,choice,torrent_client):
-        if choice == "yes" or "Yes":
-            for i in torrent_client:
-                os.system("app-{} stop".format(i))
-        else:
-            pass
+    def stop_torrent_client(self,torrent_client):
+        for i in torrent_client:
+            os.system("app-{} stop".format(i))
+        
         
     def torrent_stopping_opt(self):
         opt = input("Do you wish to stop torrent client on hitting disk limit ? (yes/no): ")
@@ -111,3 +109,9 @@ if __name__ == '__main__':
         quota_percent = checker.quota_percentage(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
         alert = checker.compare_quota(threshold,quota_percent)
         checker.Discord_notification_(url, alert)
+        checker.get_torrent_clients(config_path)
+        if value == "yes" or "Yes" or "YES":
+            torrent_client = checker.stop_torrent_client(value)
+            checker.stop_torrent_client(torrent_client)
+        else:
+            pass
