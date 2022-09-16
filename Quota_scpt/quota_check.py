@@ -96,7 +96,7 @@ if __name__ == '__main__':
     check = os.path.exists(config_file)
     if check == False:
         url = checker.Discord_Notifications_Accepter()
-        opt = checker.stop_torrent_client()
+        opt = checker.torrent_stopping_opt()
         checker.create_config_file(url,opt)
     else:
         pass
