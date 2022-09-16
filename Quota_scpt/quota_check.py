@@ -53,9 +53,9 @@ class Quota_check():
     
     def compare_quota(self,threshold,quota_percent):
         if threshold < quota_percent:
-            print("disk alert")
+            return True
         else:
-            print("all okay")
+            return False
 
 
     """
@@ -105,8 +105,7 @@ if __name__ == '__main__':
         checker.create_config_file(url,opt)
     else:
         url,value = checker.read_config_file()
-        print(url,value)
         Used_Quota_metric, Used_Quota_Value, Quota_Limit = checker.get_quota_value()
         quota_percent = checker.quota_percentage(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
-        print(quota_percent)
-        checker.compare_quota(threshold,quota_percent)
+        alert = checker.compare_quota(threshold,quota_percent)
+        print(alert)
