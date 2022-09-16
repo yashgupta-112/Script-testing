@@ -90,6 +90,11 @@ class Quota_check():
         with open(config_file, '+w') as configfile:
             config.write(configfile)
     
+    def read_config_file(self):
+        config.read(config_file)
+        url = config["Webhook"]["value"]
+        val = config["option"]["stop_torrentclient"]
+        return url, val
 
 checker = Quota_check()
 if __name__ == '__main__':
@@ -99,7 +104,9 @@ if __name__ == '__main__':
         opt = checker.torrent_stopping_opt()
         checker.create_config_file(url,opt)
     else:
-        pass
-        #Used_Quota_metric, Used_Quota_Value, Quota_Limit = checker.get_quota_value()
-        #quota_percent = checker.quota_percentage(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
+        url,value = checker.read_config_file()
+        print(url,value)
+        Used_Quota_metric, Used_Quota_Value, Quota_Limit = checker.get_quota_value()
+        quota_percent = checker.quota_percentage(Used_Quota_metric, Used_Quota_Value, Quota_Limit)
+        print(quota_percent)
         #checker.compare_quota(threshold,quota_percent)
